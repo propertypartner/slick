@@ -104,11 +104,6 @@ object SlickBuild extends Build {
     libraryDependencies ++= Dependencies.mainDependencies,
     logBuffered := false,
     repoKind <<= (version)(v => if(v.trim.endsWith("SNAPSHOT")) "snapshots" else "releases"),
-    //publishTo <<= (repoKind)(r => Some(Resolver.file("test", file("c:/temp/repo/"+r)))),
-    publishTo <<= (repoKind){
-      case "snapshots" => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-      case "releases" =>  Some("releases"  at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-    },
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
@@ -134,7 +129,10 @@ object SlickBuild extends Build {
         <scm>
           <url>git@github.com:slick/slick.git</url>
           <connection>scm:git:git@github.com:slick/slick.git</connection>
-        </scm>
+        </scm>,
+    // PP fork repo
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    publishTo := Some("Sonatype Nexus Repository Manager" at "https://nexus.quantumwings.com/repository/pp")
   ) ++ scalaSettings
 
   def runTasksSequentially(tasks: List[TaskKey[_]])(state: State): State = tasks match {
